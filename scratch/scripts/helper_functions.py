@@ -135,9 +135,20 @@ def setup_qa_model(model_name="deepset/roberta-base-squad2", save_directory="./m
 
     return qa_pipeline, model, tokenizer
 
-def analyze_qa_output(model, tokenizer, question, context, debug=False):
+def analyze_qa_output(model, tokenizer, question, context, max_length=512, debug=False):
     """
-    Analyze the model's output in detail, including score computation and full probability distributions.
+    Analyze the output of the question-answering model.
+    
+    Args:
+    model: The QA model.
+    tokenizer: The tokenizer for the model.
+    question: The question string.
+    context: The context string.
+    max_length: Maximum sequence length for the model (default 612).
+    debug: Extended debug information (default False).
+    
+    Returns:
+    dict: A dictionary containing the analysis results.
     """
 
     if debug:
@@ -149,7 +160,7 @@ def analyze_qa_output(model, tokenizer, question, context, debug=False):
         print(f"Number of tokens in question: {len(tokenizer.tokenize(question))}")
         print(f"Number of tokens in context: {len(tokenizer.tokenize(context))}")
 
-    inputs = tokenizer(question, context, return_tensors="pt")
+    inputs = tokenizer(question, context, return_tensors="pt", max_length=max_length, truncation=True)
 
     if debug:
         print("Keys in the BatchEncoding object:", inputs.keys())
